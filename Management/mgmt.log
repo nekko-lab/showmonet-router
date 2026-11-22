@@ -1,0 +1,123 @@
+Using 2712 out of 524288 bytes
+
+! NEC Portable Internetwork Core Operating System Software
+! IX Series IX2105 (magellan-sec) Software, Version 10.2.42, RELEASE SOFTWARE
+! Compiled Sep 09-Fri-2022 13:40:53 JST #2
+! Last updated Nov 07-Sat-2026 14:01:29 JST
+!
+hostname mgmt-ix
+timezone +09 00
+!
+logging buffered 131072
+logging subsystem all warn
+logging timestamp datetime
+!
+ntp server 192.168.100.10
+!
+!
+ip ufs-cache enable
+ip access-list snmp-mgmt permit ip src 192.168.100.10/32 dest any
+ip access-list web-http-acl permit ip src any dest 192.168.1.254/32
+!
+!
+!
+!
+snmp-agent ip enable
+snmp-agent ip community nekko-ro snmp-mgmt
+snmp-agent ip host 192.168.100.10 nekko-ro version 2 
+snmp-agent ip trap-source GigaEthernet0.10
+!
+bridge irb enable
+!
+!
+!
+!
+!
+!
+!
+ip dhcp profile web-dhcp-gigaethernet1.0
+  dns-server 192.168.1.254
+!
+device GigaEthernet0
+!
+device GigaEthernet1
+  vlan-group 1 port 1
+  vlan-group 2 port 2
+  vlan-group 3 port 3
+  vlan-group 4 port 4
+!
+interface GigaEthernet0.0
+  no ip address
+  shutdown
+!
+interface GigaEthernet0.1
+  description VLAN101 trunk to mgmt-srv (AS65001)
+  encapsulation dot1q 101 tpid 8100
+  auto-connect
+  no ip address
+  bridge-group 101
+  no shutdown
+!
+interface GigaEthernet0.2
+  description VLAN102 trunk to mgmt-srv (AS65002)
+  encapsulation dot1q 102 tpid 8100
+  auto-connect
+  no ip address
+  bridge-group 102
+  no shutdown
+!
+interface GigaEthernet0.3
+  description VLAN103 trunk to mgmt-srv (AS65003)
+  encapsulation dot1q 103 tpid 8100
+  auto-connect
+  no ip address
+  bridge-group 103
+  no shutdown
+!
+interface GigaEthernet0.4
+  description VLAN104 trunk to mgmt-srv (AS65004)
+  encapsulation dot1q 104 tpid 8100
+  auto-connect
+  no ip address
+  bridge-group 104
+  no shutdown
+!
+interface GigaEthernet0.10
+  description VLAN100 mgmt-ix management (L3 only, not bridged)
+  encapsulation dot1q 100 tpid 8100
+  auto-connect
+  ip address 192.168.100.1/24
+  no shutdown
+!
+interface GigaEthernet1:1.0
+  description Port 1 access VLAN101 to as1-core GE1:4 (AS65001)
+  no ip address
+  bridge-group 101
+  no shutdown
+!
+interface GigaEthernet1:2.0
+  description Port 2 access VLAN102 to as2-core GE1:4 (AS65002)
+  no ip address
+  bridge-group 102
+  no shutdown
+!
+interface GigaEthernet1:3.0
+  description Port 3 access VLAN103 to as3-core GE1:4 (AS65003)
+  no ip address
+  bridge-group 103
+  no shutdown
+!
+interface GigaEthernet1:4.0
+  description Port 4 access VLAN104 to as4-core GE1:4 (AS65004)
+  no ip address
+  bridge-group 104
+  no shutdown
+!
+interface Loopback0.0
+  no ip address
+!
+interface Null0.0
+  no ip address
+!
+web-console system information
+  o lan1 GigaEthernet1.0
